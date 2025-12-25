@@ -1,75 +1,70 @@
+% Clear workspace variables, console and existing inputs
 clc, clear all, clear vars
 
-% SI Units
 
-% Gauge Width
-gw = 0.8
+% Track characteristics variables
 
-% Radius
-r = 20
+% Minimum track curvature radius
+radius = 20
+% Loading gauge width
+load_gauge = 0.8
 
-% Desired locomotive length and width
-PROOF_LENGHT = 3.2
-PROOF_WIDTH = 0.66
+% Locomotive dimensions variables
 
-% Calculate track points
+% Locomotive length
+loco_length = 2.7
+% Locomotive width
+loco_width = 0.6
+% Distance between bogies (pivot)
+bogie_dist = 1.6
 
-% Midline
-X = linspace(0, r, 250)
-Y = sqrt(r^2 - (X-r).^2)
 
-X_outer = linspace(-gw/2, r, 250)
-Y_outer = sqrt((r+gw/2)^2 - (X_outer-r).^2)
+% Calculate track
+x_track = linspace(0, radius, 100);
+x_outer = linspace(-load_gauge/2, radius, 120);
+x_inner = linspace(load_gauge/2, radius, 80);
 
-X_inner = linspace(gw/2, r, 250)
-Y_inner = sqrt((r-gw/2)^2 - (X_inner-r).^2)
+y_track = sqrt(radius^2 - (x_track-radius).^2);
+y_outer = sqrt((radius+(load_gauge/2))^2 - (x_outer-radius).^2);
+y_inner = sqrt((radius-(load_gauge/2))^2 - (x_inner-radius).^2);
 
-% Calculate locomotive size
 
-a = acos(-(PROOF_LENGHT^2/(2*r^2)) + 1)
+% Calculate locomotive position
 
-back = [0, 0]
-front = [r-r*cos(a), r*sin(a)]
+alpha = acos(-(bogie_dist^2/(2*radius^2)) + 1)
+pivot_back = [0, 0];
+pivot_front = [radius - radius*cos(alpha), radius*sin(alpha)];
+% Locomotive "roll" - angle relative to track tagent
+theta = atan(pivot_front(2)/pivot_front(1))
 
-t = atan(front(2)/front(1))
+% Calculate rotation matrix (it differs from literature rotation matrices)
+rotation_mat = [cos(theta), -sin(theta); sin(theta), cos(theta)];
 
-back_right = back + (PROOF_WIDTH/2)*[cos(-t + pi/2), -sin(-t + pi/2)]
-back_left = back + (PROOF_WIDTH/2)*[-cos(-t + pi/2), sin(-t + pi/2)]
+% Locomotive position matrix (each corner corresponds to a column)
+% Locomotive corners are mentioned counter-clockwise with the first one
+% being the bottom left corner (locomotive end)
+locomotive_pos = [-(loco_length-bogie_dist)/2, -(loco_length-bogie_dist)/2, bogie_dist+(loco_length-bogie_dist)/2, bogie_dist+(loco_length-bogie_dist)/2;
+                  -loco_width/2, loco_width/2, loco_width/2, -loco_width/2];
 
-front_right = front + (PROOF_WIDTH/2)*[cos(-t + pi/2), -sin(-t + pi/2)]
-front_left = front + (PROOF_WIDTH/2)*[-cos(-t + pi/2), sin(-t + pi/2)]
+% Rotate local coordinates to global coordinates
+locomotive_pos = rotation_mat*locomotive_pos;
 
-X_back = linspace(back_left(1), back_right(1), 5)
-X_front = linspace(front_left(1), front_right(1), 5)
-Y_back = linspace(back_left(2), back_right(2), 5)
-Y_front = linspace(front_left(2), front_right(2), 5)
-
-X_left = linspace(back_left(1), front_left(1), 5)
-Y_left = linspace(back_left(2), front_left(2), 5)
-
-X_right = linspace(back_right(1), front_right(1), 5)
-Y_right = linspace(back_right(2), front_right(2), 5)
-
-% Plot track curvature
-
-figure
-
-plot(X, Y, 'black')
+% Plot track loading gauge position and locomotive ocupation
+% Track
+plot(x_track, y_track, 'black')
 hold on
-plot(X_outer, Y_outer, 'r')
+plot(x_outer, y_outer, 'red')
 hold on
-plot(X_inner, Y_inner, 'r')
+plot(x_inner, y_inner, 'red')
 hold on
 
-% Plot locomotive position
-
-plot(X_back, Y_back, 'b')
+% Locomotive corners
+plot(locomotive_pos(1,1), locomotive_pos(2,1), 'bs')
 hold on
-plot(X_front, Y_front, 'b')
+plot(locomotive_pos(1,2), locomotive_pos(2,2), 'bs')
 hold on
-plot(X_left, Y_left, 'b')
+plot(locomotive_pos(1,3), locomotive_pos(2,3), 'bs')
 hold on
-plot(X_right, Y_right, 'b')
+plot(locomotive_pos(1,4), locomotive_pos(2,4), 'bs')
 hold on
-
 
