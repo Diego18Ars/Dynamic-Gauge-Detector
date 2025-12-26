@@ -49,9 +49,8 @@ locomotive_pos = [-(loco_length-bogie_dist)/2, -(loco_length-bogie_dist)/2, bogi
 % Rotate local coordinates to global coordinates
 locomotive_pos = rotation_mat*locomotive_pos;
 
-% Plot track loading gauge position and locomotive ocupation
 
-% Giving the locomotive an "advance" to better visualize results
+% Giving the locomotive an "advance" for better visualisation of the results
 gamma = pi/8;
 advance = [radius*(1-cos(gamma)); radius*sin(gamma)];
 rotation_adv = [cos(gamma), sin(gamma); -sin(gamma), cos(gamma)];
@@ -62,6 +61,14 @@ locomotive_pos(1, :) = locomotive_pos(1, :) + advance(1);
 locomotive_pos(2, :) = locomotive_pos(2, :) + advance(2);
 
 
+% Plot track loading gauge position and locomotive ocupation
+
+% Plot settings: grid lines and constant ratio between x-axis and y-axis
+grid on
+hold on
+axis equal
+hold on
+
 % Track
 plot(x_track, y_track, 'black')
 hold on
@@ -70,13 +77,13 @@ hold on
 plot(x_inner, y_inner, 'red')
 hold on
 
-% Locomotive corners
-plot(locomotive_pos(1,1), locomotive_pos(2,1), 'bs')
+% Locomotive corners and walls
+plot([locomotive_pos(1,1), locomotive_pos(1,2)], [locomotive_pos(2,1), locomotive_pos(2,2)], 'b-s')
 hold on
-plot(locomotive_pos(1,2), locomotive_pos(2,2), 'bs')
+plot([locomotive_pos(1,2), locomotive_pos(1,3)], [locomotive_pos(2,2), locomotive_pos(2,3)], 'b-s')
 hold on
-plot(locomotive_pos(1,3), locomotive_pos(2,3), 'bs')
+plot([locomotive_pos(1,3), locomotive_pos(1,4)], [locomotive_pos(2,3), locomotive_pos(2,4)], 'b-s')
 hold on
-plot(locomotive_pos(1,4), locomotive_pos(2,4), 'bs')
+plot([locomotive_pos(1,4), locomotive_pos(1,1)], [locomotive_pos(2,4), locomotive_pos(2,1)], 'b-s')
 hold on
 
