@@ -37,8 +37,8 @@ pivot_front = [radius - radius*cos(alpha), radius*sin(alpha)];
 % Locomotive "roll" - angle relative to track tagent
 theta = atan(pivot_front(2)/pivot_front(1))
 
-% Calculate rotation matrix (it differs from literature rotation matrices)
-rotation_mat = [cos(theta), -sin(theta); sin(theta), cos(theta)];
+% Calculate rotation matrix (clockwise)
+rotation_mat = [cos(-theta), sin(-theta); -sin(-theta), cos(-theta)];
 
 % Locomotive position matrix (each corner corresponds to a column)
 % Locomotive corners are mentioned counter-clockwise with the first one
@@ -51,12 +51,12 @@ locomotive_pos = rotation_mat*locomotive_pos;
 
 
 % Giving the locomotive an "advance" for better visualisation of the results
+% Since the slope of the intial portion is high its resolution is bad
 gamma = pi/8;
 advance = [radius*(1-cos(gamma)); radius*sin(gamma)];
-rotation_adv = [cos(gamma), sin(gamma); -sin(gamma), cos(gamma)];
+advance_rotation = [cos(gamma), sin(gamma); -sin(gamma), cos(gamma)];
 
-locomotive_pos = rotation_adv*locomotive_pos;
-
+locomotive_pos = advance_rotation*locomotive_pos;
 locomotive_pos(1, :) = locomotive_pos(1, :) + advance(1);
 locomotive_pos(2, :) = locomotive_pos(2, :) + advance(2);
 
@@ -70,20 +70,22 @@ axis equal
 hold on
 
 % Track
-plot(x_track, y_track, 'black')
+plot(x_track, y_track, 'black', 'DisplayName', 'Track centerline');
 hold on
-plot(x_outer, y_outer, 'red')
+plot(x_outer, y_outer, 'red', 'DisplayName', 'Loading gauge limit');
 hold on
-plot(x_inner, y_inner, 'red')
+plot(x_inner, y_inner, 'red', 'HandleVisibility', 'off');
 hold on
 
 % Locomotive corners and walls
-plot([locomotive_pos(1,1), locomotive_pos(1,2)], [locomotive_pos(2,1), locomotive_pos(2,2)], 'b-s')
+plot([locomotive_pos(1,1), locomotive_pos(1,2)], [locomotive_pos(2,1), locomotive_pos(2,2)], 'b-s', 'DisplayName', 'Locomotive');
 hold on
-plot([locomotive_pos(1,2), locomotive_pos(1,3)], [locomotive_pos(2,2), locomotive_pos(2,3)], 'b-s')
+plot([locomotive_pos(1,2), locomotive_pos(1,3)], [locomotive_pos(2,2), locomotive_pos(2,3)], 'b-s', 'HandleVisibility', 'off');
 hold on
-plot([locomotive_pos(1,3), locomotive_pos(1,4)], [locomotive_pos(2,3), locomotive_pos(2,4)], 'b-s')
+plot([locomotive_pos(1,3), locomotive_pos(1,4)], [locomotive_pos(2,3), locomotive_pos(2,4)], 'b-s', 'HandleVisibility', 'off');
 hold on
-plot([locomotive_pos(1,4), locomotive_pos(1,1)], [locomotive_pos(2,4), locomotive_pos(2,1)], 'b-s')
+plot([locomotive_pos(1,4), locomotive_pos(1,1)], [locomotive_pos(2,4), locomotive_pos(2,1)], 'b-s', 'HandleVisibility', 'off');
 hold on
 
+% Show legend
+legend();
