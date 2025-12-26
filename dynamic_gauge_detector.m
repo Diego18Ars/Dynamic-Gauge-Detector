@@ -20,7 +20,7 @@ bogie_dist = 1.6
 
 
 % Calculate track
-x_track = linspace(0, radius, 100);
+x_track = linspace(0, radius, 500);
 x_outer = linspace(-load_gauge/2, radius, 120);
 x_inner = linspace(load_gauge/2, radius, 80);
 
@@ -50,6 +50,18 @@ locomotive_pos = [-(loco_length-bogie_dist)/2, -(loco_length-bogie_dist)/2, bogi
 locomotive_pos = rotation_mat*locomotive_pos;
 
 % Plot track loading gauge position and locomotive ocupation
+
+% Giving the locomotive an "advance" to better visualize results
+gamma = pi/8;
+advance = [radius*(1-cos(gamma)); radius*sin(gamma)];
+rotation_adv = [cos(gamma), sin(gamma); -sin(gamma), cos(gamma)];
+
+locomotive_pos = rotation_adv*locomotive_pos;
+
+locomotive_pos(1, :) = locomotive_pos(1, :) + advance(1);
+locomotive_pos(2, :) = locomotive_pos(2, :) + advance(2);
+
+
 % Track
 plot(x_track, y_track, 'black')
 hold on
