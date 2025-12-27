@@ -14,7 +14,7 @@ load_gauge = 0.8
 % Locomotive length
 loco_length = 2.7
 % Locomotive width
-loco_width = 0.6
+loco_width = .6
 % Distance between bogies (pivot)
 bogie_dist = 1.6
 
@@ -78,14 +78,55 @@ plot(x_inner, y_inner, 'red', 'HandleVisibility', 'off');
 hold on
 
 % Locomotive corners and walls
-plot([locomotive_pos(1,1), locomotive_pos(1,2)], [locomotive_pos(2,1), locomotive_pos(2,2)], 'b-s', 'DisplayName', 'Locomotive');
+plot([locomotive_pos(1,1), locomotive_pos(1,2)], [locomotive_pos(2,1), locomotive_pos(2,2)], 'b-', 'DisplayName', 'Locomotive');
 hold on
-plot([locomotive_pos(1,2), locomotive_pos(1,3)], [locomotive_pos(2,2), locomotive_pos(2,3)], 'b-s', 'HandleVisibility', 'off');
+plot([locomotive_pos(1,2), locomotive_pos(1,3)], [locomotive_pos(2,2), locomotive_pos(2,3)], 'b-', 'HandleVisibility', 'off');
 hold on
-plot([locomotive_pos(1,3), locomotive_pos(1,4)], [locomotive_pos(2,3), locomotive_pos(2,4)], 'b-s', 'HandleVisibility', 'off');
+plot([locomotive_pos(1,3), locomotive_pos(1,4)], [locomotive_pos(2,3), locomotive_pos(2,4)], 'b-', 'HandleVisibility', 'off');
 hold on
-plot([locomotive_pos(1,4), locomotive_pos(1,1)], [locomotive_pos(2,4), locomotive_pos(2,1)], 'b-s', 'HandleVisibility', 'off');
+plot([locomotive_pos(1,4), locomotive_pos(1,1)], [locomotive_pos(2,4), locomotive_pos(2,1)], 'b-', 'HandleVisibility', 'off');
 hold on
+
+% Calculate corner (and therefore locomotive) interferences with loading
+% guage limit
+
+% Corner 1
+if norm(norm([radius; 0]-locomotive_pos(:, 1))) <= radius - (load_gauge/2) || norm(norm([radius; 0]-locomotive_pos(:, 1))) >= radius + (load_gauge/2)
+    plot(locomotive_pos(1, 1), locomotive_pos(2, 1), 'ro', 'HandleVisibility', 'off');
+    hold on
+else
+    plot(locomotive_pos(1, 1), locomotive_pos(2, 1), 'bo', 'HandleVisibility', 'off');
+    hold on
+end
+
+% Corner 2
+if norm(norm([radius; 0]-locomotive_pos(:, 2))) <= radius - (load_gauge/2) || norm(norm([radius; 0]-locomotive_pos(:, 2))) >= radius + (load_gauge/2)
+    plot(locomotive_pos(1, 2), locomotive_pos(2, 2), 'ro', 'HandleVisibility', 'off');
+    hold on
+else
+    plot(locomotive_pos(1, 2), locomotive_pos(2, 2), 'bo', 'HandleVisibility', 'off');
+    hold on
+end
+
+% Corner 3
+if norm(norm([radius; 0]-locomotive_pos(:, 3))) <= radius - (load_gauge/2) || norm(norm([radius; 0]-locomotive_pos(:, 3))) >= radius + (load_gauge/2)
+    plot(locomotive_pos(1, 3), locomotive_pos(2, 3), 'ro', 'HandleVisibility', 'off');
+    hold on
+else
+    plot(locomotive_pos(1, 3), locomotive_pos(2, 3), 'bo', 'HandleVisibility', 'off');
+    hold on
+end
+
+% Corner 4
+if norm(norm([radius; 0]-locomotive_pos(:, 4))) <= radius - (load_gauge/2) || norm(norm([radius; 0]-locomotive_pos(:, 4))) >= radius + (load_gauge/2)
+    plot(locomotive_pos(1, 4), locomotive_pos(2, 4), 'ro', 'HandleVisibility', 'off');
+    hold on
+else
+    plot(locomotive_pos(1, 4), locomotive_pos(2, 4), 'bo', 'HandleVisibility', 'off');
+    hold on
+end
+
 
 % Show legend
 legend();
+
